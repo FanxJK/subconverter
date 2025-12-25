@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REGISTRY_IMAGE: FanxJK/subconverter
-  GHCR_IMAGE: ghcr.io/FanxJK/subconverter
+  REGISTRY_IMAGE: fanxjk/subconverter
+  GHCR_IMAGE: ghcr.io/fanxjk/subconverter
 
 jobs:
   build-dockerhub:
