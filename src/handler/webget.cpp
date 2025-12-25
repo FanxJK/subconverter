@@ -15,6 +15,7 @@
 #include "utils/logger.h"
 #include "utils/urlencode.h"
 #include "version.h"
+#include "utils/string.h"
 #include "webget.h"
 
 #ifdef _WIN32
@@ -170,12 +171,18 @@ static int curlGet(const FetchArgument &argument, FetchResult &result)
     header_list = curl_slist_append(header_list, "Content-Type: application/json;charset=utf-8");
     if(argument.request_headers)
     {
+        bool has_user_agent = false;
         for(auto &x : *argument.request_headers)
         {
+            auto key_lc = toLower(x.first);
+            if(key_lc == "x-forwarded-for") // strip X-Forwarded-For to avoid leaking client IP
+                continue;
+            if(key_lc == "user-agent")
+                has_user_agent = true;
             auto header = x.first + ": " + x.second;
             header_list = curl_slist_append(header_list, header.data());
         }
-        if(!argument.request_headers->contains("User-Agent"))
+        if(!has_user_agent)
             curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, user_agent_str);
     }
     // header_list = curl_slist_append(header_list, "SubConverter-Request: 1");
